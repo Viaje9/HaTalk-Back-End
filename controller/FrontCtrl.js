@@ -21,7 +21,8 @@ class IndexCtrl {
         response.cookie("Token", token, {
           httpOnly: true,
           maxAge: maxAge,
-          sameSite: "none"
+          sameSite: "none",
+          secure: true
         });
         response.json({ success: true });
         return;

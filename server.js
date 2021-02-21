@@ -15,7 +15,10 @@ const corsOptions = {
   credentials: true
 };
 
-mongoose.connect(process.env.db, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.db, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
