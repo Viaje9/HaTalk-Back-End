@@ -50,7 +50,7 @@ class IndexCtrl {
       req.body.password,
       process.env.saltRounds
     );
-    //搜索帳號
+    //搜索帳號 
     const account = await User.find({ account: req.query.account });
     //不要相信前端傳進來的東西(寫驗證)
     //檢查帳號是否重複
