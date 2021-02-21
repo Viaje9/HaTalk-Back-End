@@ -1,9 +1,9 @@
 // const Chatroom = require('../model/User');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const Chat = require("../model/Chat");
-const key = require("../db");
-const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 class IndexCtrl {
   async login(req, response) {
@@ -14,7 +14,7 @@ class IndexCtrl {
         userData.password
       );
       if (verifyPassword) {
-        const token = jwt.sign({ _id: req.body.account }, key.jwt, {
+        const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
           expiresIn: "14 day"
         });
         const maxAge = 14 * 24 * 60 * 60 * 1000;
@@ -40,7 +40,7 @@ class IndexCtrl {
   //待優化
   async register(req, res) {
     //加密
-    req.body.password = await bcrypt.hash(req.body.password, key.saltRounds);
+    req.body.password = await bcrypt.hash(req.body.password, process.env.saltRounds);
     //搜索帳號
     const account = await User.find({ account: req.query.account });
     //不要相信前端傳進來的東西(寫驗證)
@@ -50,7 +50,7 @@ class IndexCtrl {
       User.create(req.body, (err, user) => {
         if (err) res.send({ success: false });
         //新增token
-        const token = jwt.sign({ _id: req.body.account }, key.jwt, {
+        const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
           expiresIn: "14 day"
         });
         res.cookie("Token", token, { httpOnly: true });

@@ -5,7 +5,8 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const http = require("http").createServer(app);
 const index = require("./routes/index");
-const key = require("./db");
+
+require("dotenv").config();
 
 const corsOptions = {
   origin: ["http://www.example.com", "http://localhost:3000"],
@@ -14,7 +15,7 @@ const corsOptions = {
   credentials: true
 };
 
-mongoose.connect(key.db, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.db, { useNewUrlParser: true, useUnifiedTopology: true });
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());

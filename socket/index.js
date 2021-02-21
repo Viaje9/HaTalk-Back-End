@@ -4,7 +4,7 @@ const http = require("../server");
 const io = require("socket.io")(http);
 const User = require("../model/User");
 const Chat = require("../model/Chat");
-const key = require("../db");
+require("dotenv").config();
 
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
   socket.on("bind room", async (msg) => {
     const cookies = cookie.parse(socket.handshake.headers.cookie);
     if (cookies.Token) {
-      socket.account = jwt.verify(cookies.Token, key.jwt)._id;
+      socket.account = jwt.verify(cookies.Token, process.env.jwt)._id;
       const room = await User.findOne(
         { account: socket.account },
         { chatList: { $elemMatch: { friend: msg } } }
@@ -31,5 +31,3 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-module.exports = io

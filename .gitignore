@@ -2,3 +2,4 @@
 /node_modules
 /db.js
 /public/index.bundle.js
+.env
