@@ -7,6 +7,7 @@ const http = require("http").createServer(app);
 const index = require("./routes/index");
 require("dotenv").config();
 
+console.log(process.env.origin.split(' '));
 const corsOptions = {
   origin: process.env.origin.split(' '),
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
