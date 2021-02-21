@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
-const key = require('../db');
+require("dotenv").config();
 
 module.exports = function (req, res, next) {
     try {
-        req.account = jwt.verify(req.cookies.Token, key.jwt)._id
+        req.account = jwt.verify(req.cookies.Token, process.env.jwt)._id
         next()
     } catch {
         res.send({ success: false })
