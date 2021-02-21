@@ -5,11 +5,10 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const http = require("http").createServer(app);
 const index = require("./routes/index");
-
 require("dotenv").config();
 
 const corsOptions = {
-  origin: ["http://www.example.com", "http://localhost:3000"],
+  origin: process.env.origin.split(' '),
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   allowedHeaders: ["Content-Type"],
   credentials: true
