@@ -18,7 +18,11 @@ class IndexCtrl {
           expiresIn: "14 day"
         });
         const maxAge = 14 * 24 * 60 * 60 * 1000;
-        response.cookie("Token", token, { httpOnly: true, maxAge: maxAge });
+        response.cookie("Token", token, {
+          httpOnly: true,
+          maxAge: maxAge,
+          sameSite: "none"
+        });
         response.json({ success: true });
         return;
       }
@@ -40,7 +44,10 @@ class IndexCtrl {
   //待優化
   async register(req, res) {
     //加密
-    req.body.password = await bcrypt.hash(req.body.password, process.env.saltRounds);
+    req.body.password = await bcrypt.hash(
+      req.body.password,
+      process.env.saltRounds
+    );
     //搜索帳號
     const account = await User.find({ account: req.query.account });
     //不要相信前端傳進來的東西(寫驗證)
