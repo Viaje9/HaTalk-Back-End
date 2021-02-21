@@ -7,14 +7,15 @@ require("dotenv").config();
 
 class IndexCtrl {
   async login(req, response) {
-    const userData = await User.findOne({ account: req.body.account });
+    const { account, password } = req.body;
+    const userData = await User.findOne({ account });
     if (userData) {
       const verifyPassword = await bcrypt.compare(
-        req.body.password,
+        password,
         userData.password
       );
       if (verifyPassword) {
-        const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
+        const token = jwt.sign({ _id: account }, process.env.jwt, {
           expiresIn: "14 day"
         });
         const maxAge = 14 * 24 * 60 * 60 * 1000;
