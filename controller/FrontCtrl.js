@@ -4,27 +4,28 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const Chat = require("../model/Chat");
 require("dotenv").config();
-
+console.log(process.env.NODE_ENV);
 class IndexCtrl {
   async login(req, response) {
     const { account, password } = req.body;
     const userData = await User.findOne({ account });
     if (userData) {
-      const verifyPassword = await bcrypt.compare(
-        password,
-        userData.password
-      );
+      const verifyPassword = await bcrypt.compare(password, userData.password);
       if (verifyPassword) {
         const token = jwt.sign({ _id: account }, process.env.jwt, {
           expiresIn: "14 day"
         });
         const maxAge = 14 * 24 * 60 * 60 * 1000;
-        response.cookie("Token", token, {
+        const cookieConfig = {
           httpOnly: true,
           maxAge: maxAge,
-          sameSite: "none",
-          secure: true
-        });
+          sameSite: "none"
+        };
+        if (process.env.NODE_ENV === "production") {
+          cookieConfig.secure = true;
+          cookieConfig.domain = ".github.io"
+        }
+        response.cookie("Token", token);
         response.json({ success: true });
         return;
       }
@@ -50,7 +51,7 @@ class IndexCtrl {
       req.body.password,
       process.env.saltRounds
     );
-    //搜索帳號 
+    //搜索帳號
     const account = await User.find({ account: req.query.account });
     //不要相信前端傳進來的東西(寫驗證)
     //檢查帳號是否重複
