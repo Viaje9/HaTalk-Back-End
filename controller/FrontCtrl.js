@@ -23,7 +23,7 @@ class IndexCtrl {
         };
         if (process.env.NODE_ENV === "production") {
           cookieConfig.secure = true;
-          cookieConfig.domain = ".github.io";
+          cookieConfig.domain = "https://ha-talk-api.herokuapp.com";
         }
         response.cookie("Token", token, cookieConfig);
         response.json({ success: true });
