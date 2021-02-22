@@ -23,7 +23,7 @@ class IndexCtrl {
         };
         if (process.env.NODE_ENV === "production") {
           cookieConfig.secure = true;
-          cookieConfig.domain = "viajarnow.github.io";
+          cookieConfig.domain = ".github.io";
         }
         response.cookie("Token", token, cookieConfig);
         response.json({ success: true });
