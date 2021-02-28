@@ -18,12 +18,12 @@ class IndexCtrl {
         const maxAge = 14 * 24 * 60 * 60 * 1000;
         const cookieConfig = {
           httpOnly: true,
-          maxAge: maxAge,
-          sameSite: "none"
+          maxAge: maxAge
         };
         if (process.env.NODE_ENV === "production") {
+          cookieConfig.sameSite = "none";
           cookieConfig.secure = true;
-          cookieConfig.domain = "ha-talk-api.herokuapp.com";
+          cookieConfig.domain = ".viaje9.github.io";
         }
         response.cookie("Token", token, cookieConfig);
         response.json({ success: true });
