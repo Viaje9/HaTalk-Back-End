@@ -23,6 +23,7 @@ class IndexCtrl {
         if (process.env.NODE_ENV === "production") {
           cookieConfig.sameSite = "none";
           cookieConfig.secure = true;
+          cookieConfig.domain = ".viaje9.com";
         }
         response.cookie("Token", token, cookieConfig);
         response.json({ success: true });
