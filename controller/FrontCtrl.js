@@ -1,9 +1,16 @@
 // const Chatroom = require('../model/User');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
 const User = require("../model/User");
 const Chat = require("../model/Chat");
 require("dotenv").config();
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 console.log(process.env.NODE_ENV);
 class IndexCtrl {
   async login(req, response) {
@@ -168,6 +175,11 @@ class IndexCtrl {
     Chat.findOne({ _id: room.chatList[0].chat }, function (err, res) {
       response.json(res.record);
     });
+  }
+
+  wakeUp(req, response) {
+    const time = dayjs().tz("Asia/Taipei").format("YYYY年MM月DD日 HH點mm分");
+    response.send("現在時間：" + time);
   }
 }
 

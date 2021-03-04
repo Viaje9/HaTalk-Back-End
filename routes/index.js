@@ -13,5 +13,6 @@ Router.put('/UpdateUserState', Auth, IndexCtrl.updateUserState)
 Router.get('/SearchUser', Auth, IndexCtrl.searchUser)
 Router.post('/AddFriend', Auth, IndexCtrl.addFriend)
 Router.get('/GetMsg', Auth, IndexCtrl.getMsg)
+Router.get('/wakeUp', IndexCtrl.wakeUp)
 
 module.exports = Router;

@@ -4,12 +4,15 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
 const http = require("http").createServer(app);
+const request = require("request");
 const index = require("./routes/index");
 require("dotenv").config();
 
-console.log(process.env.origin.split(' '));
+const PORT = process.env.PORT || 8080;
+
+console.log(process.env.origin.split(" "));
 const corsOptions = {
-  origin: process.env.origin.split(' '),
+  origin: process.env.origin.split(" "),
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   allowedHeaders: ["Content-Type"],
   credentials: true
@@ -24,8 +27,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(index);
 
-http.listen(process.env.PORT || 8080, () => {
-  console.log("listening on *:", process.env.PORT || 8080);
+http.listen(PORT, () => {
+  console.log("listening on *:", PORT);
 });
+
+// 喚醒heroku
+setInterval(() => {
+  const url = `http://127.0.0.1:${PORT}/wakeUp`;
+  request.get(url, (err, res, body) => console.log(body));
+}, 25 * 60 * 1000);
 
 module.exports = http;
