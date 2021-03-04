@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
-const http = require("http").createServer(app);
-const request = require("request");
+const request = require("http");
+const http = request.createServer(app);
 const index = require("./routes/index");
 require("dotenv").config();
 
@@ -33,8 +33,16 @@ http.listen(PORT, () => {
 
 // 喚醒heroku
 setInterval(() => {
-  const url = `https://viaje9.com/wakeUp`;
-  request.get(url, (err, res, body) => console.log(body));
+  const url = `http://viaje9.com/wakeUp`;
+  request.get(url, (resp) => {
+    let data = "";
+    resp.on("data", (chunk) => {
+      data += chunk;
+    });
+    resp.on("end", (res) => {
+      console.log(data);
+    });
+  });
 }, 25 * 60 * 1000);
 
 module.exports = http;
