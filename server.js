@@ -33,7 +33,7 @@ http.listen(PORT, () => {
 
 // 喚醒heroku
 setInterval(() => {
-  const url = `http://127.0.0.1:${PORT}/wakeUp`;
+  const url = `https://viaje9.com/wakeUp`;
   request.get(url, (err, res, body) => console.log(body));
 }, 25 * 60 * 1000);
 
