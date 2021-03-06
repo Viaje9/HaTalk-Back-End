@@ -32,17 +32,18 @@ http.listen(PORT, () => {
 });
 
 // 喚醒heroku
-setInterval(() => {
-  const url = `http://viaje9.com/wakeUp`;
-  request.get(url, (resp) => {
-    let data = "";
-    resp.on("data", (chunk) => {
-      data += chunk;
+if (process.env.NODE_ENV === "production") {
+  setInterval(() => {
+    request.get(process.env.url, (resp) => {
+      let data = "";
+      resp.on("data", (chunk) => {
+        data += chunk;
+      });
+      resp.on("end", (res) => {
+        console.log(data);
+      });
     });
-    resp.on("end", (res) => {
-      console.log(data);
-    });
-  });
-}, 25 * 60 * 1000);
+  }, 25 * 60 * 1000);
+}
 
 module.exports = http;

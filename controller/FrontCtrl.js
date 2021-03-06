@@ -178,8 +178,10 @@ class IndexCtrl {
   }
 
   wakeUp(req, response) {
-    const time = dayjs().tz("Asia/Taipei").format("YYYY年MM月DD日 HH點mm分");
-    response.send("現在時間：" + time);
+    const time = dayjs()
+      .tz("Asia/Taipei")
+      .format("現在時間：YYYY年MM月DD日 HH點mm分");
+    response.send(time);
   }
 }
 
