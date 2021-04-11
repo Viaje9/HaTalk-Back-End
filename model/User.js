@@ -10,10 +10,6 @@ module.exports = mongoose.model('User', new mongoose.Schema({
         type: String,
         required: true
     },
-    state: {
-        type: String,
-        default: null
-    },
     friends: [{
         type: Schema.Types.ObjectId,
         ref: 'User',

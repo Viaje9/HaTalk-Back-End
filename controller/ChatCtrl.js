@@ -11,7 +11,6 @@ require("dotenv").config();
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-console.log(process.env.NODE_ENV);
 class IndexCtrl {
   async login(req, response) {
     const { account, password } = req.body;
@@ -56,23 +55,31 @@ class IndexCtrl {
     //加密
     req.body.password = await bcrypt.hash(
       req.body.password,
-      process.env.saltRounds
+      parseInt(process.env.saltRounds)
     );
     //搜索帳號
-    const account = await User.find({ account: req.query.account });
+    const account = await User.find({ account: req.body.account });
     //不要相信前端傳進來的東西(寫驗證)
     //檢查帳號是否重複
     if (account.length <= 0) {
       //新增使用者
-      User.create(req.body, (err, user) => {
-        if (err) res.send({ success: false });
-        //新增token
-        const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
-          expiresIn: "14 day"
-        });
-        res.cookie("Token", token, { httpOnly: true });
-        res.json({ success: true });
+      const newUser = await User.create(req.body)
+      //新增token
+      const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
+        expiresIn: "14 day"
       });
+      const maxAge = 14 * 24 * 60 * 60 * 1000;
+      const cookieConfig = {
+        httpOnly: true,
+        maxAge: maxAge
+      };
+      if (process.env.NODE_ENV === "production") {
+        cookieConfig.sameSite = "none";
+        cookieConfig.secure = true;
+        cookieConfig.domain = ".viaje9.com";
+      }
+      res.cookie("Token", token, cookieConfig);
+      res.json({ success: true });
     } else {
       res.json({ success: false });
     }

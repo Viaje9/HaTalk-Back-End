@@ -1,18 +1,18 @@
 const express = require('express');
 const Router = express.Router();
-const IndexCtrl = require('../controller/FrontCtrl')
+const ChatCtrl = require('../controller/ChatCtrl')
 const Auth = require('../auth/token')
 
-Router.get('/CheckAccount', IndexCtrl.checkAccount)
-Router.post('/Login', IndexCtrl.login)
-Router.get('/Logout', IndexCtrl.logout)
-Router.post('/Register', IndexCtrl.register)
-Router.get('/GetUser', Auth, IndexCtrl.getUser)
-Router.put('/UpdateUserName', Auth, IndexCtrl.updateUserName)
-Router.put('/UpdateUserState', Auth, IndexCtrl.updateUserState)
-Router.get('/SearchUser', Auth, IndexCtrl.searchUser)
-Router.post('/AddFriend', Auth, IndexCtrl.addFriend)
-Router.get('/GetMsg', Auth, IndexCtrl.getMsg)
-Router.get('/wakeUp', IndexCtrl.wakeUp)
+Router.get('/CheckAccount', ChatCtrl.checkAccount)
+Router.post('/Login', ChatCtrl.login)
+Router.get('/Logout', ChatCtrl.logout)
+Router.post('/Register', ChatCtrl.register)
+Router.get('/GetUser', Auth, ChatCtrl.getUser)
+Router.put('/UpdateUserName', Auth, ChatCtrl.updateUserName)
+Router.put('/UpdateUserState', Auth, ChatCtrl.updateUserState)
+Router.get('/SearchUser', Auth, ChatCtrl.searchUser)
+Router.post('/AddFriend', Auth, ChatCtrl.addFriend)
+Router.get('/GetMsg', Auth, ChatCtrl.getMsg)
+Router.get('/wakeUp', ChatCtrl.wakeUp)
 
 module.exports = Router;
