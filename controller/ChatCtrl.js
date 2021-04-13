@@ -63,7 +63,7 @@ class IndexCtrl {
     //檢查帳號是否重複
     if (account.length <= 0) {
       //新增使用者
-      const newUser = await User.create(req.body)
+      const newUser = await User.create(req.body);
       //新增token
       const token = jwt.sign({ _id: req.body.account }, process.env.jwt, {
         expiresIn: "14 day"
@@ -143,20 +143,19 @@ class IndexCtrl {
   }
 
   async addFriend(req, res) {
-    await User.findOne({ account: req.account })
+    const userAccount = req.account;
+    const addAccount = req.body.account;
+    await User.findOne({ account: userAccount })
       .populate("friends")
       .exec(async (err, result) => {
-        const repeat = result.friends.filter(
-          (e) => e.account === req.body.account
-        );
-        if (repeat.length == 0) {
-          if (req.account !== req.body.account) {
-            const newChat = new Chat();
-            creatFriend(req.account, req.body.account, newChat._id);
-            creatFriend(req.body.account, req.account, newChat._id);
-            await newChat.save();
-            res.send({ success: true });
-          } else res.send({ success: false });
+        const repeat = result.friends.filter((e) => e.account === addAccount);
+        // 如果沒有此好有 且使用者帳號不等於要新增的帳號
+        if (repeat.length === 0 && userAccount !== addAccount) {
+          const newChat = new Chat();
+          creatFriend(userAccount, addAccount, newChat._id);
+          creatFriend(addAccount, userAccount, newChat._id);
+          await newChat.save();
+          res.send({ success: true });
         } else res.send({ success: false });
       });
 
