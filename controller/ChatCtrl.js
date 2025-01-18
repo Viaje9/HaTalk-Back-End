@@ -12,7 +12,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 class IndexCtrl {
-  async login(req, response) {
+  async login(req, res) {
     const { account, password } = req.body;
     const userData = await User.findOne({ account });
     if (userData) {
@@ -31,18 +31,18 @@ class IndexCtrl {
           cookieConfig.secure = true;
           cookieConfig.domain = ".viaje9.com";
         }
-        response.cookie("Token", token, cookieConfig);
-        response.json({ success: true });
+        res.cookie("Token", token, cookieConfig);
+        res.json({ success: true });
         return;
       }
     }
 
-    response.json({ success: false });
+    res.json({ success: false });
   }
 
-  async logout(req, response) {
-    response.clearCookie("Token");
-    response.json({ success: true });
+  async logout(req, res) {
+    res.clearCookie("Token");
+    res.json({ success: true });
   }
 
   async checkAccount(req, res) {
@@ -89,7 +89,7 @@ class IndexCtrl {
     //取得好友名單就好
     await User.findOne({ account: req.account })
       .populate("friends")
-      .exec(function (err, result) {
+      .exec().then((result) => {
         const data = {
           success: true,
           name: result.name,
@@ -99,47 +99,41 @@ class IndexCtrl {
           })
         };
         res.json(data);
-      });
+      })
   }
 
   updateUserName(req, res) {
-    User.updateOne(
-      { account: req.account },
-      { name: req.body.name },
-      (err, result) => {
-        if (err) res.send({ success: false });
+    User.updateOne({ account: req.account }, { name: req.body.name })
+      .then(() => {
         res.send({ success: true });
-      }
-    );
+      }).catch((err) => {
+        res.send({ success: false });
+      })
   }
 
   updateUserState(req, res) {
-    User.updateOne(
-      { account: req.account },
-      { state: req.body.state },
-      (err, result) => {
-        if (err) res.send({ success: false });
-        res.send({ success: true });
-      }
-    );
+    User.updateOne({ account: req.account }, { state: req.body.state }).then(() => {
+      res.send({ success: true });
+    }).catch(() => {
+      res.send({ success: false });
+    })
   }
 
   searchUser(req, res) {
-    User.findOne(
-      { account: req.query.account },
-      "account name state",
-      (err, result) => {
-        if (err || result === null) res.send({ success: false });
-        else {
-          const data = {
-            account: result.account,
-            name: result.name,
-            state: result.state
-          };
-          res.send({ success: true, user: data });
-        }
+    User.findOne({ account: req.query.account }, "account name state").then(result => {
+      if (result === null) {
+        res.send({ success: false })
+      } else {
+        const data = {
+          account: result.account,
+          name: result.name,
+          state: result.state
+        };
+        res.send({ success: true, user: data });
       }
-    );
+    }).catch(() => {
+      res.send({ success: false });
+    })
   }
 
   async addFriend(req, res) {
@@ -147,7 +141,7 @@ class IndexCtrl {
     const addAccount = req.body.account;
     await User.findOne({ account: userAccount })
       .populate("friends")
-      .exec(async (err, result) => {
+      .exec().then(async (result) => {
         const repeat = result.friends.filter((e) => e.account === addAccount);
         // 如果沒有此好有 且使用者帳號不等於要新增的帳號
         if (repeat.length === 0 && userAccount !== addAccount) {
@@ -157,37 +151,36 @@ class IndexCtrl {
           await newChat.save();
           res.send({ success: true });
         } else res.send({ success: false });
-      });
+      })
 
     async function creatFriend(user, friend, chatId) {
-      await User.findOne({ account: user }, async (err, userRes) => {
-        const data = {
-          friends: userRes._id,
-          chatList: {
-            friend: userRes.account,
-            chat: chatId
-          }
-        };
-        await User.updateOne({ account: friend }, { $push: data }).exec();
-      });
+      const userRes = await User.findOne({ account: user });
+      const data = {
+        friends: userRes._id,
+        chatList: {
+          friend: userRes.account,
+          chat: chatId
+        }
+      };
+      await User.updateOne({ account: friend }, { $push: data }).exec()
     }
   }
 
-  async getMsg(req, response) {
+  async getMsg(req, res) {
     const room = await User.findOne(
       { account: req.account },
       { chatList: { $elemMatch: { friend: req.query.account } } }
     );
-    Chat.findOne({ _id: room.chatList[0].chat }, function (err, res) {
-      response.json(res.record);
-    });
+    Chat.findOne({ _id: room.chatList[0].chat }).then((result) => {
+      res.json(result.record);
+    })
   }
 
-  wakeUp(req, response) {
+  wakeUp(req, res) {
     const time = dayjs()
       .tz("Asia/Taipei")
       .format("現在時間：YYYY年MM月DD日 HH點mm分");
-    response.send(time);
+      res.send(time);
   }
 }
 

@@ -1,10 +1,21 @@
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 const http = require("../server");
-const io = require("socket.io")(http);
+const socketIo = require("socket.io");
 const User = require("../model/User");
 const Chat = require("../model/Chat");
 require("dotenv").config();
+
+const io = socketIo(http, {
+  cors: {
+    origin: process.env.origin.split(" "),
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    transports: ['websocket', 'polling'],
+    allowedHeaders: ["Content-Type"],
+    credentials: true
+  },
+  allowEIO3: true
+})
 
 io.on("connection", (socket) => {
   socket.on("chat message", (msg) => {
@@ -25,7 +36,7 @@ io.on("connection", (socket) => {
         { account: socket.account },
         { chatList: { $elemMatch: { friend: msg } } }
       );
-      socket.room = room.chatList[0].chat;
+      socket.room = room.chatList[0].chat.toString();
       socket.friend = msg;
       socket.join(socket.room);
     }
