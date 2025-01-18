@@ -16,7 +16,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
-    command: ["mongod", "--logpath", "/dev/null","--quiet"]
 
 volumes:
   mongo-data:
